@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ff2222" />
+  <title>TROPA DO NG — Sensibilidade & Painéis</title>
+  <style>
+    :root {
+      --bg: #05050a; --panel: rgba(18,18,32,.78); --panel2: rgba(29,27,51,.76);
+      --line: rgba(255,255,255,.11); --text: #f8f7ff; --muted: #b8b8c8;
+      --red: #ff2222; --red-bright: #ff4444; --gold: #f3b94f; --gold2: #ffda83;
+      --blue: #3c8dff; --green: #61f5a3; --discord: #5865f2;
+      --xiaomi: #ff6700; --motorola: #E60012; --iphone: #f8f7ff; --infinix: #FF6B00;
+      --lg: #A50034; --nokia: #0056B8; --tiktok: #ff2e63; --orange: #ff7a00;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body {
+      color: var(--text); background: var(--bg);
+      background-image: url('https://i.imgur.com/4QZ8wQj.jpeg');
+      background-attachment: fixed; background-size: cover;
+      background-position: center top; background-repeat: no-repeat;
+      min-height: 100vh;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1;
+      background: linear-gradient(to bottom, rgba(5,5,10,.35), rgba(5,5,10,.85));
+    }
+    .container { max-width: 950px; margin: 0 auto; padding: 20px; position: relative; }
+    header {
+      position: sticky; top: 0; z-index: 200; backdrop-filter: blur(18px);
+      background: rgba(7,7,17,.85); border-bottom: 1px solid rgba(255,34,34,.3);
+      padding: 12px 0;
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: .9rem; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--red), var(--red-bright));
+      display: grid; place-items: center; font-weight: bold;
+    }
+    .btn {
+      padding: 10px 18px; border-radius: 10px; border: none; font-weight: bold;
+      cursor: pointer; transition: .3s; font-size: .9rem; text-decoration: none; display: inline-flex;
+      align-items: center; justify-content: center; gap: 6px;
+      position: relative; z-index: 100; pointer-events: auto;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn-tiktok {
+      background: linear-gradient(90deg, var(--tiktok), var(--red)); color: white;
+      animation: brilho 2s infinite;
+    }
+    @keyframes brilho {
+      0%,100% { box-shadow: 0 0 15px rgba(255,34,34,.4); }
+      50% { box-shadow: 0 0 30px rgba(255,34,34,.6); }
+    }
+    .btn-discord { background: var(--discord); color: white; }
+    .btn-gold { background: linear-gradient(110deg, var(--gold2), var(--gold)); color: #191108; }
+    .btn-green { 
+      background: linear-gradient(90deg, var(--green), #34d399); color: #000; 
+      width: 100%; padding: 14px; font-size: 1.05rem; margin: 20px 0;
+      position: relative; z-index: 150; pointer-events: auto;
+    }
+    .btn-orange { background: linear-gradient(90deg, var(--orange), #ff9900); color: white; width: 100%; }
+    h1 { text-align: center; margin: 30px 0 10px; font-size: clamp(2rem, 8vw, 3rem); }
+    .accent { color: var(--red); text-shadow: 0 0 20px rgba(255,34,34,.5); }
+    .sub { text-align: center; color: var(--muted); margin-bottom: 25px; font-size: 1.1rem; }
+    .botoes-topo { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 15px 0 30px; position: relative; z-index: 50; }
+    
+    .area-sensi { display: none; margin-top: 20px; position: relative; z-index: 100; }
+    .area-sensi.mostrar { display: block; animation: aparece .3s ease-out; }
+    
+    @keyframes aparece {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .abas { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+    .aba {
+      padding: 10px 14px; background: rgba(255,255,255,.05); border: none;
+      color: #aaa; border-radius: 8px; cursor: pointer; font-weight: bold; transition: .2s;
+      position: relative; z-index: 100; pointer-events: auto;
+    }
+    .aba.ativa { background: rgba(255,255,255,.15); color: white; }
+    .aba.samsung.ativa { border-bottom: 3px solid #4285f4; }
+    .aba.xiaomi.ativa { border-bottom: 3px solid var(--xiaomi); }
+    .aba.motorola.ativa { border-bottom: 3px solid var(--motorola); }
+    .aba.iphone.ativa { border-bottom: 3px solid #f8f7ff; }
+    .aba.infinix.ativa { border-bottom: 3px solid var(--infinix); }
+    .aba.lg.ativa { border-bottom: 3px solid var(--lg); }
+    .aba.nokia.ativa { border-bottom: 3px solid var(--nokia); }
+    
+    .grupo { display: none; }
+    .grupo.ativo { display: block; }
+    .grid { 
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+      gap: 10px; margin: 15px 0;
+    }
+    .btn-aparelho {
+      padding: 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: .2s;
+      position: relative; z-index: 100; pointer-events: auto;
+    }
+    .btn-aparelho:hover { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+    
+    .card {
+      background: var(--panel2); border: 2px solid var(--green); border-radius: 15px;
+      padding: 25px; margin-top: 20px; display: none;
+      animation: aparece .4s ease-out;
+    }
+    .card.mostrar { display: block; }
+    .nome-modelo { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; color: var(--green); }
+    .linha { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .linha span:first-child { color: var(--muted); }
+    .linha span:last-child { font-weight: bold; }
+    .dica {
+      margin-top: 20px; padding: 15px; background: rgba(88,101,242,.1);
+      border-radius: 10px; font-size: .9rem; color: #ccc; line-height: 1.6;
+    }
+    
+    .section-title { text-align: center; margin: 50px 0 25px; position: relative; z-index: 10; }
+    .section-title small { color: var(--red); font-weight: 900; letter-spacing: .15em; font-size: .8rem; }
+    .section-title h2 { font-size: 2rem; margin-top: 8px; }
+    
+    .planos-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;
+      position: relative; z-index: 10;
+    }
+    .plano-card {
+      border: 2px solid; border-radius: 20px; padding: 25px;
+      background: rgba(0,0,0,.5); transition: .3s;
+    }
+    .plano-card:hover { transform: translateY(-5px); }
+    .plano-vip { border-color: var(--gold); box-shadow: 0 0 25px rgba(243,185,79,.15); }
+    .plano-basico { border-color: var(--red); }
+    .plano-sensi-vip { border-color: var(--green); }
+    .plano-otimizador { border-color: var(--orange); }
+    .plano-nome { font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; }
+    .plano-preco { font-size: 2rem; font-weight: 900; margin-bottom: 15px; }
+    .plano-vip .plano-nome, .plano-vip .plano-preco { color: var(--gold); }
+    .plano-basico .plano-nome, .plano-basico .plano-preco { color: var(--red); }
+    .plano-sensi-vip .plano-nome, .plano-sensi-vip .plano-preco { color: var(--green); }
+    .plano-otimizador .plano-nome, .plano-otimizador .plano-preco { color: var(--orange); }
+    .plano-lista { list-style: none; margin: 15px 0; }
+    .plano-lista li { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .9rem; }
+    .check { color: var(--green); margin-right: 6px; }
+    .aviso-win {
+      background: rgba(255,170,0,.1); border: 1px solid #ffaa00; border-radius: 10px;
+      padding: 12px; margin: 15px 0; font-size: .85rem; line-height: 1.5;
+    }
+    
+    footer {
+      margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--line);
+      text-align: center; color: var(--muted); font-size: .9rem; position: relative; z-index: 10;
+    }
+    .whatsapp {
+      position: fixed; right: 20px; bottom: 20px; z-index: 999;
+      width: 55px; height: 55px; border-radius: 50%; background: #25d366;
+      color: white; font-size: 1.4rem; display: grid; place-items: center;
+      box-shadow: 0 5px 20px rgba(37,211,102,.35); animation: balanco 2s infinite;
+    }
+    @keyframes balanco {
+      0%,100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
+    }
+    
+    /* GARANTIR CLIQUE NO BOTÃO PRINCIPAL */
+    #btnAbrir {
+      position: relative !important;
+      z-index: 9999 !important;
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      user-select: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand"><span class="brand-mark">T</span>TROPA DO NG</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="#pacotes" class="btn btn-gold" style="padding:8px 14px;font-size:.85rem;">📦 Pacotes</a>
+      <a href="https://discord.gg/6vb235uWC" target="_blank" class="btn btn-discord" style="padding:8px 14px;font-size:.85rem;">🔵 Discord</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h1>🔥 TROPA DO <span class="accent">NG</span> 🔥</h1>
+  <p class="sub">Sensibilidade Grátis • Painéis • Otimizador — Tudo Aqui!</p>
+
+  <div class="botoes-topo">
+    <a href="https://tiktok.com/@oh_nego_ttk" target="_blank" class="btn btn-tiktok">📱 SEGUIR NO TIKTOK</a>
+    <a href="#sensi" class="btn btn-green" style="width:auto;">🎯 PEGAR SENSI GRÁTIS</a>
+  </div>
+
+  <section id="sensi" style="position: relative; z-index: 100;">
+    <button class="btn btn-green" id="btnAbrir" style="width: 100%; margin: 10px 0;">📱 ESCOLHER APARELHO ▼</button>
+    
+    <div class="area-sensi" id="areaSensi">
+      <div class="abas">
+        <button class="aba samsung ativa" data-marca="samsung">📘 Samsung</button>
+        <button class="aba xiaomi" data-marca="xiaomi">📱 Xiaomi</button>
+        <button class="aba motorola" data-marca="motorola">🔴 Motorola</button>
+        <button class="aba iphone" data-marca="iphone">🍎 iPhone</button>
+        <button class="aba infinix" data-marca="infinix">🔥 Infinix</button>
+        <button class="aba lg" data-marca="lg">🇰🇷 LG</button>
+        <button class="aba nokia" data-marca="nokia">🇫🇮 Nokia</button>
+      </div>
+
+      <div class="grupo samsung ativo" id="grupo-samsung">
+        <h3 style="color:#4285f4; margin:10px 0;">📘 Samsung</h3>
+        <div class="grid" id="grid-samsung"></div>
+      </div>
+      <div class="grupo xiaomi" id="grupo-xiaomi">
+        <h3 style="color:#ff6700; margin:10px 0;">📱 Xiaomi/Redmi/POCO</h3>
+        <div class="grid" id="grid-xiaomi"></div>
+      </div>
+      <div class="grupo motorola" id="grupo-motorola">
+        <h3 style="color:#E60012; margin:10px 0;">🔴 Motorola</h3>
+        <div class="grid" id="grid-motorola"></div>
+      </div>
+      <div class="grupo iphone" id="grupo-iphone">
+        <h3 style="color:#f8f7ff; margin:10px 0;">🍎 iPhone</h3>
+        <div class="grid" id="grid-iphone"></div>
+      </div>
+      <div class="grupo infinix" id="grupo-infinix">
+        <h3 style="color:#FF6B00; margin:10px 0;">🔥 Infinix</h3>
+        <div class="grid" id="grid-infinix"></div>
+      </div>
+      <div class="grupo lg" id="grupo-lg">
+        <h3 style="color:#A50034; margin:10px 0;">🇰🇷 LG</h3>
+        <div class="grid" id="grid-lg"></div>
+      </div>
+      <div class="grupo nokia" id="grupo-nokia">
+        <h3 style="color:#0056B8; margin:10px 0;">🇫🇮 Nokia</h3>
+        <div class="grid" id="grid-nokia"></div>
+      </div>
+
+      <div class="card" id="card">
+        <div class="nome-modelo" id="nomeModelo"></div>
+        <div class="linha"><span>⚙️ DPI</span><span id="vDpi"></span></div>
+        <div class="linha"><span>🎯 Geral</span><span id="vGeral"></span></div>
+        <div class="linha"><span>🔴 Ponto Vermelho</span><span id="vPonto"></span></div>
+        <div class="linha"><span>🔍 Mira 2x</span><span id="v2x"></span></div>
+        <div class="linha"><span>🔭 Mira 4x</span><span id="v4x"></span></div>
+        <div class="linha"><span>🎯 AWM</span><span id="vAwm"></span></div>
+        <div class="linha"><span>👀 Olhadinha</span><span id="vOlha"></span></div>
+        <div class="linha"><span>🔘 Botão de Tiro</span><span id="vTiro"></span></div>
+        <div class="dica">
+          💡 Precisão: Padrão • FPS: Alto • Gráfico: Suave • Modo Jogo: Ativado<br>
+          Ajuste ±3 pontos se precisar! Valores são base recomendada ✅
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pacotes">
+    <div class="section-title">
+      <small>ESCOLHA SEU</small>
+      <h2>PACOTES & PAINÉIS</h2>
+    </div>
+    <div class="planos-grid">
+      
+      <div class="plano-card plano-basico">
+        <h3 class="plano-nome">🎮 PAINEL BÁSICO</h3>
+        <p class="plano-preco">R$ 25,00</p>
+        <p style="font-size:.9rem; color:var(--muted); margin-bottom:1rem;">Configurações prontas pra melhorar sua mira!</p>
+        <ul class="plano-lista">
+          <li><span class="check">✅</span> Perfil de sensibilidade</li>
+          <li><span class="check">✅</span> Botão de tiro otimizado</li>
+          <li><span class="check">✅</span> DPI recomendado pro seu aparelho</li>
+          <li><span class="check">✅</span> Ajustes de mira</li>
+          <li><span class="check">✅</span> Suporte no Discord</li>
+        </ul>
+        <a href="https://wa.me/5574998062818" target="_blank" class="btn btn-orange">💡 COMPRAR</a>
+      </div>
+
+      <div class="plano-card plano-vip">
+        <h3 class="plano-nome">👑 PAINEL VIP COMPLETO</h3>
+        <p class="plano-preco">R$ 45,00</p>
+        <p style="font-size:.9rem; color:var(--muted); margin-bottom:1rem;">Tudo liberado + configurações exclusivas! 🔥</p>
+        <ul class="plano-lista">
+          <li><span class="check">✅</span> Tudo do Painel Básico</li>
+          <li><span class="check">✅</span> Sensi personalizada pro seu toque</li>
+          <li><span class="check">✅</span> Configuração de DPI avançada</li>
+          <li><span class="check">✅</span> Técnica de One-Tap ajustada</li>
+          <li><span class="check">✅</span> Ajuste de velocidade do dedo</li>
+          <li><span class="check">✅</span> Atualizações vitalícias grátis</li>
+          <li><span class="check">✅</span> Suporte PRIORITÁRIO direto comigo</li>
+        </ul>
+        <a href="https://wa.me/5574998062818" target="_blank" class="btn btn-gold" style="width:100%;">💡 COMPRAR VIP</a>
+      </div>
+
+      <div class="plano-card plano-sensi-vip">
+        <h3 class="plano-nome">💚 SENSI VIP COMPLETA</h3>
+        <p class="plano-preco">R$ 35,00</p>
+        <p style="font-size:.9rem; color:var(--muted); margin-bottom:1rem;">Acesso ilimitado a todas as sensis!</p>
+        <ul class="plano-lista">
+          <li><span class="check">✅</span> Acesso ilimitado — 7 Marcas</li>
+          <li><span class="check">✅</span> Sensi personalizada pro seu toque</li>
+          <li><span class="check">✅</span> Suporte rápido no Discord</li>
+          <li><span class="check">✅</span> Atualizações grátis SEMPRE</li>
+        </ul>
+        <a href="https://wa.me/5574998062818" target="_blank" class="btn" style="width:100%; background:linear-gradient(110deg,var(--green),var(--blue)); color:white;">💡 COMPRAR</a>
+      </div>
+
+      <div class="plano-card plano-otimizador">
+        <h3 class="plano-nome">⚡ OTIMIZADOR DE PC</h3>
+        <p class="plano-preco">R$ 20,00</p>
+        <p style="font-size:.9rem; color:var(--muted); margin-bottom:1rem;">Deixa o PC lisinho e o jogo sem travar!</p>
+        <ul class="plano-lista">
+          <li><span class="check">✅</span> Limpeza de lixo e arquivos temporários</li>
+          <li><span class="check">✅</span> Otimização de RAM</li>
+          <li><span class="check">✅</span> Plano de energia — máximo desempenho</li>
+          <li><span class="check">✅</span> Desativa serviços pesados</li>
+          <li><span class="check">✅</span> Aumenta FPS no Free Fire</li>
+          <li><span class="check">✅</span> Reduz travadas e lag</li>
+          <li><span class="check">✅</span> Suporte direto com o Nego</li>
+        </ul>
+        <div class="aviso-win">✅ Funciona no Windows 10 e 11</div>
+        <a href="https://wa.me/5574998062818" target="_blank" class="btn btn-orange">💡 COMPRAR NO WHATSAPP</a>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <p style="font-weight:900; font-size:1.1rem; margin-bottom:8px;">TROPA DO NG — NEGO SENSIBILIDADE</p>
+    <p>7 Marcas • Painéis • Otimizador • © 2026</p>
+    <p style="margin-top:8px;">📞 (74) 99806-2818</p>
+    <p style="margin-top:5px;">🔵 <a href="https://discord.gg/6vb235uWC" target="_blank" style="color:var(--discord); font-weight:bold;">Discord Oficial</a></p>
+  </div>
+</footer>
+
+<a href="https://wa.me/5574998062818" target="_blank" class="whatsapp">💬</a>
+"iPhone X": {dpi:458, geral:188, ponto:180, x2:170, x4:158, awm:98, olha:152, tiro:"58%"},
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* =========================================================
+     DADOS DOS APARELHOS
+     ========================================================= */
+
+  const DADOS = {
+
+    samsung: {
+      "A05":     {dpi:420, geral:190, ponto:184, x2:175, x4:160, awm:60, olha:180, tiro:"72%"},
+      "A05s":    {dpi:430, geral:190, ponto:185, x2:178, x4:163, awm:60, olha:182, tiro:"72%"},
+      "A10":     {dpi:410, geral:188, ponto:180, x2:170, x4:155, awm:55, olha:175, tiro:"73%"},
+      "A12":     {dpi:420, geral:190, ponto:183, x2:174, x4:159, awm:58, olha:180, tiro:"72%"},
+      "A15":     {dpi:440, geral:190, ponto:186, x2:180, x4:165, awm:62, olha:183, tiro:"71%"},
+      "A25":     {dpi:440, geral:190, ponto:187, x2:181, x4:166, awm:62, olha:184, tiro:"71%"},
+      "A35":     {dpi:450, geral:190, ponto:187, x2:182, x4:168, awm:63, olha:185, tiro:"70%"},
+      "A54":     {dpi:450, geral:190, ponto:187, x2:182, x4:168, awm:63, olha:185, tiro:"70%"},
+      "A55":     {dpi:450, geral:190, ponto:188, x2:184, x4:170, awm:64, olha:186, tiro:"70%"}
+    },
+
+    xiaomi: {
+      "Redmi 9A":  {dpi:390, geral:195, ponto:188, x2:178, x4:165, awm:95, olha:155, tiro:"55%"},
+      "Redmi 9C":  {dpi:395, geral:194, ponto:187, x2:177, x4:164, awm:94, olha:154, tiro:"55%"},
+      "Redmi 10A": {dpi:400, geral:193, ponto:186, x2:176, x4:163, awm:93, olha:153, tiro:"56%"},
+      "Redmi 12C": {dpi:410, geral:192, ponto:185, x2:175, x4:162, awm:92, olha:152, tiro:"56%"},
+      "Note 10":   {dpi:440, geral:190, ponto:182, x2:172, x4:158, awm:88, olha:150, tiro:"58%"},
+      "Note 11":   {dpi:440, geral:189, ponto:181, x2:171, x4:157, awm:87, olha:149, tiro:"58%"},
+      "Note 12":   {dpi:450, geral:188, ponto:180, x2:170, x4:156, awm:86, olha:148, tiro:"59%"},
+      "Note 13":   {dpi:460, geral:187, ponto:179, x2:169, x4:155, awm:85, olha:147, tiro:"59%"},
+      "POCO X6":   {dpi:470, geral:185, ponto:175, x2:165, x4:150, awm:80, olha:145, tiro:"60%"},
+      "POCO X7":   {dpi:480, geral:190, ponto:185, x2:178, x4:165, awm:70, olha:180, tiro:"68%"}
+    },
+
+    motorola: {
+      "Moto G8":   {dpi:400, geral:192, ponto:184, x2:174, x4:160, awm:88, olha:152, tiro:"58%"},
+      "Moto G9":   {dpi:410, geral:191, ponto:183, x2:173, x4:159, awm:87, olha:151, tiro:"58%"},
+      "Moto G20":  {dpi:420, geral:190, ponto:182, x2:172, x4:158, awm:86, olha:150, tiro:"59%"},
+      "Moto G22":  {dpi:420, geral:190, ponto:182, x2:172, x4:158, awm:86, olha:150, tiro:"59%"},
+      "Moto G32":  {dpi:430, geral:189, ponto:181, x2:171, x4:157, awm:85, olha:149, tiro:"59%"},
+      "Moto G52":  {dpi:440, geral:188, ponto:180, x2:170, x4:156, awm:84, olha:148, tiro:"60%"},
+      "Moto G54":  {dpi:440, geral:187, ponto:179, x2:169, x4:155, awm:83, olha:147, tiro:"60%"},
+      "Moto G84":  {dpi:450, geral:186, ponto:178, x2:168, x4:154, awm:82, olha:146, tiro:"61%"},
+      "Edge 30":   {dpi:470, geral:184, ponto:175, x2:165, x4:150, awm:78, olha:144, tiro:"62%"}
+    },
+
+    iphone: {
+      "iPhone 8":       {dpi:326, geral:188, ponto:178, x2:168, x4:155, awm:95, olha:150, tiro:"58%"},
+      "iPhone 8 Plus":  {dpi:401, geral:190, ponto:180, x2:170, x4:157, awm:97, olha:152, tiro:"58%"},
+      "iPhone X":       {dpi:458, geral:188, ponto:180, x2:170, x4:158, awm:98, olha:152, tiro:"58%"},
+      "iPhone XR":      {dpi:414, geral:190, ponto:182, x2:172, x4:159, awm:96, olha:154, tiro:"59%"},
+      "iPhone XS":      {dpi:458, geral:190, ponto:182, x2:172, x4:160, awm:95, olha:155, tiro:"59%"},
+      "iPhone 11":      {dpi:414, geral:191, ponto:183, x2:173, x4:160, awm:92, olha:158, tiro:"60%"},
+      "iPhone 12":      {dpi:390, geral:192, ponto:184, x2:174, x4:161, awm:90, olha:160, tiro:"61%"},
+      "iPhone 13":      {dpi:390, geral:193, ponto:185, x2:175, x4:162, awm:88, olha:162, tiro:"62%"},
+      "iPhone 14":      {dpi:390, geral:194, ponto:186, x2:176, x4:163, awm:86, olha:164, tiro:"63%"},
+      "iPhone 15":      {dpi:393, geral:195, ponto:187, x2:177, x4:164, awm:84, olha:166, tiro:"64%"}
+    },
+
+    infinix: {
+      "Hot 11":   {dpi:400, geral:192, ponto:184, x2:174, x4:160, awm:85, olha:155, tiro:"60%"},
+      "Hot 12":   {dpi:410, geral:193, ponto:185, x2:175, x4:161, awm:83, olha:157, tiro:"61%"},
+      "Hot 20":   {dpi:420, geral:194, ponto:186, x2:176, x4:162, awm:81, olha:159, tiro:"62%"},
+      "Hot 30":   {dpi:430, geral:195, ponto:187, x2:177, x4:163, awm:79, olha:161, tiro:"63%"},
+      "Hot 30i":  {dpi:420, geral:194, ponto:186, x2:176, x4:162, awm:80, olha:160, tiro:"62%"},
+      "Hot 40":   {dpi:440, geral:195, ponto:188, x2:178, x4:164, awm:77, olha:163, tiro:"64%"},
+      "Hot 40 Pro":{dpi:450, geral:196, ponto:189, x2:179, x4:165, awm:75, olha:165, tiro:"65%"},
+      "Hot 50":   {dpi:460, geral:196, ponto:190, x2:180, x4:166, awm:73, olha:167, tiro:"66%"},
+      "Note 11":  {dpi:410, geral:193, ponto:185, x2:175, x4:161, awm:83, olha:157, tiro:"61%"},
+      "Note 12":  {dpi:420, geral:194, ponto:186, x2:176, x4:162, awm:81, olha:159, tiro:"62%"}
+    },
+
+    lg: {
+      "K22":    {dpi:380, geral:190, ponto:182, x2:172, x4:158, awm:90, olha:150, tiro:"57%"},
+      "K41":    {dpi:390, geral:191, ponto:183, x2:173, x4:159, awm:88, olha:152, tiro:"58%"},
+      "K42":    {dpi:400, geral:192, ponto:184, x2:174, x4:160, awm:86, olha:154, tiro:"59%"},
+      "K52":    {dpi:410, geral:193, ponto:185, x2:175, x4:161, awm:84, olha:156, tiro:"60%"},
+      "K61":    {dpi:420, geral:194, ponto:186, x2:176, x4:162, awm:82, olha:158, tiro:"61%"},
+      "K62":    {dpi:430, geral:195, ponto:187, x2:177, x4:163, awm:80, olha:160, tiro:"62%"},
+      "Velvet": {dpi:440, geral:196, ponto:188, x2:178, x4:164, awm:78, olha:162, tiro:"63%"}
+    },
+
+    nokia: {
+      "G11": {dpi:390, geral:190, ponto:182, x2:172, x4:158, awm:90, olha:150, tiro:"57%"},
+      "G20": {dpi:400, geral:191, ponto:183, x2:173, x4:159, awm:88, olha:152, tiro:"58%"},
+      "G21": {dpi:410, geral:192, ponto:184, x2:174, x4:160, awm:86, olha:154, tiro:"59%"},
+      "G22": {dpi:420, geral:193, ponto:185, x2:175, x4:161, awm:84, olha:156, tiro:"60%"},
+      "G42": {dpi:430, geral:194, ponto:186, x2:176, x4:162, awm:82, olha:158, tiro:"61%"},
+      "G50": {dpi:440, geral:195, ponto:187, x2:177, x4:163, awm:80, olha:160, tiro:"62%"},
+      "G60": {dpi:450, geral:196, ponto:188, x2:178, x4:164, awm:78, olha:162, tiro:"63%"},
+      "X20": {dpi:460, geral:195, ponto:187, x2:177, x4:163, awm:80, olha:160, tiro:"62%"},
+      "X30": {dpi:470, geral:196, ponto:188, x2:178, x4:164, awm:76, olha:163, tiro:"64%"}
+    }
+  };
+
+
+  /* =========================================================
+     ELEMENTOS
+     ========================================================= */
+
+  const btnAbrir = document.getElementById("btnAbrir");
+  const areaSensi = document.getElementById("areaSensi");
+  const card = document.getElementById("card");
+
+  const nomeModelo = document.getElementById("nomeModelo");
+  const vDpi = document.getElementById("vDpi");
+  const vGeral = document.getElementById("vGeral");
+  const vPonto = document.getElementById("vPonto");
+  const v2x = document.getElementById("v2x");
+  const v4x = document.getElementById("v4x");
+  const vAwm = document.getElementById("vAwm");
+  const vOlha = document.getElementById("vOlha");
+  const vTiro = document.getElementById("vTiro");
+
+
+  /* =========================================================
+     ABRIR / FECHAR ESCOLHA DE APARELHO
+     ========================================================= */
+
+  if (btnAbrir) {
+
+    btnAbrir.addEventListener("click", function (e) {
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const aberto = areaSensi.classList.toggle("mostrar");
+
+      if (aberto) {
+        btnAbrir.innerHTML = "📱 ESCOLHER APARELHO ▲";
+      } else {
+        btnAbrir.innerHTML = "📱 ESCOLHER APARELHO ▼";
+      }
+
+    });
+
+  }
+
+
+  /* =========================================================
+     CRIAR BOTÕES DOS APARELHOS
+     ========================================================= */
+
+  function criarBotoes(marca) {
+
+    const grid = document.getElementById("grid-" + marca);
+
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    const aparelhos = DADOS[marca];
+
+    if (!aparelhos) return;
+
+    Object.keys(aparelhos).forEach(function (modelo) {
+
+      const botao = document.createElement("button");
+
+      botao.type = "button";
+      botao.className = "btn-aparelho";
+      botao.textContent = modelo;
+
+      botao.addEventListener("click", function () {
+        mostrarSensi(marca, modelo);
+      });
+
+      grid.appendChild(botao);
+
+    });
+
+  }
+
+
+  /* =========================================================
+     MOSTRAR SENSIBILIDADE
+     ========================================================= */
+
+  function mostrarSensi(marca, modelo) {
+
+    const dados = DADOS[marca][modelo];
+
+    if (!dados) return;
+
+    nomeModelo.textContent = "📱 " + modelo;
+
+    vDpi.textContent = dados.dpi;
+    vGeral.textContent = dados.geral;
+    vPonto.textContent = dados.ponto;
+    v2x.textContent = dados.x2;
+    v4x.textContent = dados.x4;
+    vAwm.textContent = dados.awm;
+    vOlha.textContent = dados.olha;
+    vTiro.textContent = dados.tiro;
+
+    card.classList.add("mostrar");
+
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+  }
+
+
+  /* =========================================================
+     TROCA DE MARCA
+     ========================================================= */
+
+  const abas = document.querySelectorAll(".aba");
+
+  abas.forEach(function (aba) {
+
+    aba.addEventListener("click", function () {
+
+      const marca = this.dataset.marca;
+
+      /* Remove aba ativa */
+      abas.forEach(function (item) {
+        item.classList.remove("ativa");
+      });
+
+      /* Ativa aba clicada */
+      this.classList.add("ativa");
+
+      /* Esconde todos os grupos */
+      document.querySelectorAll(".grupo").forEach(function (grupo) {
+        grupo.classList.remove("ativo");
+      });
+
+      /* Mostra grupo escolhido */
+      const grupoSelecionado = document.getElementById(
+        "grupo-" + marca
+      );
+
+      if (grupoSelecionado) {
+        grupoSelecionado.classList.add("ativo");
+      }
+
+      /* Esconde sensibilidade anterior */
+      card.classList.remove("mostrar");
+
+    });
+
+  });
+
+
+  /* =========================================================
+     INICIAR BOTÕES
+     ========================================================= */
+
+  Object.keys(DADOS).forEach(function (marca) {
+    criarBotoes(marca);
+  });
+
+
+  /* =========================================================
+     ABRIR SAMSUNG POR PADRÃO
+     ========================================================= */
+
+  const grupoSamsung = document.getElementById("grupo-samsung");
+
+  if (grupoSamsung) {
+    grupoSamsung.classList.add("ativo");
+  }
+
+});
+</script>
